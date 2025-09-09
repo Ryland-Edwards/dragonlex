@@ -21,7 +21,7 @@ fn main() {
 
     let spec_file = &args[1];
 
-    // Read the specification file
+    // Reads spec file
     let spec_content = match fs::read_to_string(spec_file) {
         Ok(content) => content,
         Err(err) => {
@@ -30,7 +30,7 @@ fn main() {
         }
     };
 
-    // Parse the specification
+    // Parse the spec
     let spec = match parse_spec(&spec_content) {
         Ok(spec) => spec,
         Err(err) => {

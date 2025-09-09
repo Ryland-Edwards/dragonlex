@@ -56,11 +56,11 @@ fn parse_action(action_str: &str, line_num: usize) -> Result<Action, String> {
 
     if action_str.starts_with("(ERR)") {
         let err_part = action_str.strip_prefix("(ERR)").unwrap().trim();
-        if err_part.starts_with('"') && err_part.ends_with('"') {
-            let message = err_part[1..err_part.len()-1].to_string();
-            return Ok(Action::Error(message));
+        return if err_part.starts_with('"') && err_part.ends_with('"') {
+            let message = err_part[1..err_part.len() - 1].to_string();
+            Ok(Action::Error(message))
         } else {
-            return Err(format!("Line {}: Error action must have quoted message", line_num));
+            Err(format!("Line {}: Error action must have quoted message", line_num))
         }
     }
 

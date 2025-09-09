@@ -1,2 +1,2 @@
-maaan bites dog
+maaan bites dog dog hello world! "terminal string"
 
