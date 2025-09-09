@@ -112,76 +112,76 @@ impl DFA {
         self.new_state(nfa_states, nfas)
     }
 
-    pub fn simulate(&self, input: &str) -> Vec<(String, usize, usize, Option<usize>)> {
-        let mut tokens = Vec::new();
-        let mut line = 1;
-        let mut column = 1;
-        let mut pos = 0;
-        let chars: Vec<char> = input.chars().collect();
-
-        while pos < chars.len() {
-            let (token_length, rule_index) = self.longest_match(&chars[pos..]);
-
-            if token_length > 0 {
-                let lexeme: String = chars[pos..pos + token_length].iter().collect();
-                tokens.push((lexeme, line, column, rule_index));
-
-                // Update position
-                for i in pos..pos + token_length {
-                    if chars[i] == '\n' {
-                        line += 1;
-                        column = 1;
-                    } else {
-                        column += 1;
-                    }
-                }
-                pos += token_length;
-            } else {
-                // No match found, skip character
-                if chars[pos] == '\n' {
-                    line += 1;
-                    column = 1;
-                } else {
-                    column += 1;
-                }
-                pos += 1;
-            }
-        }
-
-        tokens.push(("".to_string(), line, column, None)); // EOF marker
-        tokens
-    }
-
-    fn longest_match(&self, input: &[char]) -> (usize, Option<usize>) {
-        let mut current_state = &self.start_state;
-        let mut last_accepting_pos = 0;
-        let mut last_accepting_rule = None;
-
-        // Check if start state is accepting
-        if let Some(state) = self.states.get(current_state) {
-            if state.is_accepting {
-                last_accepting_pos = 0;
-                last_accepting_rule = state.rule_index;
-            }
-        }
-
-        for (pos, &ch) in input.iter().enumerate() {
-            if let Some(next_state_id) = self.transitions.get(&(current_state.clone(), ch)) {
-                current_state = next_state_id;
-
-                if let Some(state) = self.states.get(current_state) {
-                    if state.is_accepting {
-                        last_accepting_pos = pos + 1;
-                        last_accepting_rule = state.rule_index;
-                    }
-                }
-            } else {
-                break;
-            }
-        }
-
-        (last_accepting_pos, last_accepting_rule)
-    }
+    // pub fn simulate(&self, input: &str) -> Vec<(String, usize, usize, Option<usize>)> {
+    //     let mut tokens = Vec::new();
+    //     let mut line = 1;
+    //     let mut column = 1;
+    //     let mut pos = 0;
+    //     let chars: Vec<char> = input.chars().collect();
+    //
+    //     while pos < chars.len() {
+    //         let (token_length, rule_index) = self.longest_match(&chars[pos..]);
+    //
+    //         if token_length > 0 {
+    //             let lexeme: String = chars[pos..pos + token_length].iter().collect();
+    //             tokens.push((lexeme, line, column, rule_index));
+    //
+    //             // Update position
+    //             for i in pos..pos + token_length {
+    //                 if chars[i] == '\n' {
+    //                     line += 1;
+    //                     column = 1;
+    //                 } else {
+    //                     column += 1;
+    //                 }
+    //             }
+    //             pos += token_length;
+    //         } else {
+    //             // No match found, skip character
+    //             if chars[pos] == '\n' {
+    //                 line += 1;
+    //                 column = 1;
+    //             } else {
+    //                 column += 1;
+    //             }
+    //             pos += 1;
+    //         }
+    //     }
+    //
+    //     tokens.push(("".to_string(), line, column, None)); // EOF marker
+    //     tokens
+    // }
+    //
+    // fn longest_match(&self, input: &[char]) -> (usize, Option<usize>) {
+    //     let mut current_state = &self.start_state;
+    //     let mut last_accepting_pos = 0;
+    //     let mut last_accepting_rule = None;
+    //
+    //     // Check if start state is accepting
+    //     if let Some(state) = self.states.get(current_state) {
+    //         if state.is_accepting {
+    //             last_accepting_pos = 0;
+    //             last_accepting_rule = state.rule_index;
+    //         }
+    //     }
+    //
+    //     for (pos, &ch) in input.iter().enumerate() {
+    //         if let Some(next_state_id) = self.transitions.get(&(current_state.clone(), ch)) {
+    //             current_state = next_state_id;
+    //
+    //             if let Some(state) = self.states.get(current_state) {
+    //                 if state.is_accepting {
+    //                     last_accepting_pos = pos + 1;
+    //                     last_accepting_rule = state.rule_index;
+    //                 }
+    //             }
+    //         } else {
+    //             break;
+    //         }
+    //     }
+    //
+    //     (last_accepting_pos, last_accepting_rule)
+    // }
 }
 
 fn check_accepting(nfa_states: &HashMap<usize, HashSet<NFAStateId>>, nfas: &[(NFA, usize)]) -> (bool, Option<usize>) {
